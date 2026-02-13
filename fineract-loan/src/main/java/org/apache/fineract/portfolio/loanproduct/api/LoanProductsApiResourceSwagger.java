@@ -112,6 +112,8 @@ public final class LoanProductsApiResourceSwagger {
         public Double interestRatePerPeriod;
         @Schema(example = "23.4")
         public Double maxInterestRatePerPeriod;
+        @Schema(example = "2.5")
+        public Double penaltyRate;
         @Schema(example = "1")
         public Integer repaymentEvery;
         @Schema(example = "5.5")
@@ -1428,6 +1430,8 @@ public final class LoanProductsApiResourceSwagger {
         public Double minInterestRatePerPeriod;
         @Schema(example = "10.000000")
         public Double maxInterestRatePerPeriod;
+        @Schema(example = "2.500000")
+        public Double penaltyRate;
         public GetLoanProductsProductIdResponse.GetLoanProductsInterestRateFrequencyType interestRateFrequencyType;
         @Schema(example = "60.000000")
         public Double annualInterestRate;
@@ -1613,6 +1617,8 @@ public final class LoanProductsApiResourceSwagger {
         public Double interestRatePerPeriod;
         @Schema(example = "23.4")
         public Double maxInterestRatePerPeriod;
+        @Schema(example = "2.5")
+        public Double penaltyRate;
         @Schema(example = "1")
         public Integer repaymentEvery;
         @Schema(example = "5.5")
