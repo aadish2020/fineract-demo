@@ -608,12 +608,7 @@ public final class LoanProductDataValidator {
         }
 
         // Penalty rate validation
-        if (this.fromApiJsonHelper.parameterExists(LoanProductConstants.PENALTY_RATE, element)) {
-            final BigDecimal penaltyRate = this.fromApiJsonHelper.extractBigDecimalWithLocaleNamed(LoanProductConstants.PENALTY_RATE,
-                    element);
-            baseDataValidator.reset().parameter(LoanProductConstants.PENALTY_RATE).value(penaltyRate).ignoreIfNull()
-                    .zeroOrPositiveAmount();
-        }
+        validatePenaltyRate(element, baseDataValidator);
 
         // Fixed Length validation
         fixedLengthValidations(transactionProcessingStrategyCode, isInterestBearing, numberOfRepayments, repaymentEvery, element,
@@ -1753,12 +1748,7 @@ public final class LoanProductDataValidator {
         }
 
         // Penalty rate validation
-        if (this.fromApiJsonHelper.parameterExists(LoanProductConstants.PENALTY_RATE, element)) {
-            final BigDecimal penaltyRate = this.fromApiJsonHelper.extractBigDecimalWithLocaleNamed(LoanProductConstants.PENALTY_RATE,
-                    element);
-            baseDataValidator.reset().parameter(LoanProductConstants.PENALTY_RATE).value(penaltyRate).ignoreIfNull()
-                    .zeroOrPositiveAmount();
-        }
+        validatePenaltyRate(element, baseDataValidator);
 
         // Fixed Length validation
         fixedLengthValidations(transactionProcessingStrategyCode, isInterestBearing, numberOfRepayments, repaymentEvery, element,
@@ -3031,5 +3021,14 @@ public final class LoanProductDataValidator {
 
     private Integer defaultToZeroIfNull(Integer value) {
         return value != null ? value : 0;
+    }
+
+    private void validatePenaltyRate(final JsonElement element, final DataValidatorBuilder baseDataValidator) {
+        if (this.fromApiJsonHelper.parameterExists(LoanProductConstants.PENALTY_RATE, element)) {
+            final BigDecimal penaltyRate = this.fromApiJsonHelper.extractBigDecimalWithLocaleNamed(LoanProductConstants.PENALTY_RATE,
+                    element);
+            baseDataValidator.reset().parameter(LoanProductConstants.PENALTY_RATE).value(penaltyRate).ignoreIfNull()
+                    .zeroOrPositiveAmount();
+        }
     }
 }
