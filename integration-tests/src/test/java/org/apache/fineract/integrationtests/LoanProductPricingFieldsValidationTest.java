@@ -21,13 +21,14 @@ package org.apache.fineract.integrationtests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
 import org.apache.fineract.client.models.PostLoanProductsRequest;
 import org.apache.fineract.client.models.PostLoanProductsResponse;
 import org.apache.fineract.client.models.PutLoanProductsProductIdRequest;
 import org.apache.fineract.client.models.PutLoanProductsProductIdResponse;
+import org.apache.fineract.client.util.CallFailedRuntimeException;
 import org.junit.jupiter.api.Test;
 
 public class LoanProductPricingFieldsValidationTest extends BaseLoanIntegrationTest {
@@ -67,13 +68,10 @@ public class LoanProductPricingFieldsValidationTest extends BaseLoanIntegrationT
         final PostLoanProductsRequest request = create4IProgressive();
         request.setPenaltyRate(new BigDecimal("-5.0"));
 
-        // This should fail validation
-        try {
+        // Expect validation to fail with CallFailedRuntimeException
+        assertThrows(CallFailedRuntimeException.class, () -> {
             loanProductHelper.createLoanProduct(request);
-        } catch (Exception e) {
-            // Expected to fail validation
-            assertNotNull(e);
-        }
+        });
     }
 
     /**
