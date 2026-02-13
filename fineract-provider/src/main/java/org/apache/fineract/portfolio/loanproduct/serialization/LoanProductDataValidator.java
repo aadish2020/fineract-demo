@@ -130,6 +130,7 @@ public final class LoanProductDataValidator {
             NUMBER_OF_REPAYMENTS, MIN_NUMBER_OF_REPAYMENTS, MAX_NUMBER_OF_REPAYMENTS, REPAYMENT_FREQUENCY_TYPE, INTEREST_RATE_PER_PERIOD,
             MIN_INTEREST_RATE_PER_PERIOD, MAX_INTEREST_RATE_PER_PERIOD, INTEREST_RATE_FREQUENCY_TYPE, AMORTIZATION_TYPE, INTEREST_TYPE,
             INTEREST_CALCULATION_PERIOD_TYPE, LoanProductConstants.ALLOW_PARTIAL_PERIOD_INTEREST_CALCUALTION_PARAM_NAME,
+            LoanProductConstants.PENALTY_RATE,
             IN_ARREARS_TOLERANCE, TRANSACTION_PROCESSING_STRATEGY_CODE, ADVANCED_PAYMENT_ALLOCATIONS, CREDIT_ALLOCATIONS,
             GRACE_ON_PRINCIPAL_PAYMENT, "recurringMoratoriumOnPrincipalPeriods", GRACE_ON_INTEREST_PAYMENT, GRACE_ON_INTEREST_CHARGED,
             "charges", ACCOUNTING_RULE, INCLUDE_IN_BORROWER_CYCLE, "startDate", "closeDate", "externalId",
@@ -604,6 +605,14 @@ public final class LoanProductDataValidator {
             baseDataValidator.reset().parameter(INTEREST_RATE_FREQUENCY_TYPE).value(interestRateFrequencyType).notNull().inMinMaxRange(0,
                     4);
             isInterestBearing = MathUtil.isGreaterThanZero(interestRatePerPeriod);
+        }
+
+        // Penalty rate validation
+        if (this.fromApiJsonHelper.parameterExists(LoanProductConstants.PENALTY_RATE, element)) {
+            final BigDecimal penaltyRate = this.fromApiJsonHelper.extractBigDecimalWithLocaleNamed(LoanProductConstants.PENALTY_RATE,
+                    element);
+            baseDataValidator.reset().parameter(LoanProductConstants.PENALTY_RATE).value(penaltyRate).ignoreIfNull()
+                    .zeroOrPositiveAmount();
         }
 
         // Fixed Length validation
@@ -1741,6 +1750,14 @@ public final class LoanProductDataValidator {
             baseDataValidator.reset().parameter(INTEREST_RATE_FREQUENCY_TYPE).value(interestRateFrequencyType).notNull().inMinMaxRange(0,
                     4);
             isInterestBearing = MathUtil.isGreaterThanZero(interestRatePerPeriod);
+        }
+
+        // Penalty rate validation
+        if (this.fromApiJsonHelper.parameterExists(LoanProductConstants.PENALTY_RATE, element)) {
+            final BigDecimal penaltyRate = this.fromApiJsonHelper.extractBigDecimalWithLocaleNamed(LoanProductConstants.PENALTY_RATE,
+                    element);
+            baseDataValidator.reset().parameter(LoanProductConstants.PENALTY_RATE).value(penaltyRate).ignoreIfNull()
+                    .zeroOrPositiveAmount();
         }
 
         // Fixed Length validation

@@ -60,6 +60,7 @@ public interface LoanProductConstants {
     String INTEREST_RATE_PER_PERIOD = "interestRatePerPeriod";
     String MIN_INTEREST_RATE_PER_PERIOD = "minInterestRatePerPeriod";
     String MAX_INTEREST_RATE_PER_PERIOD = "maxInterestRatePerPeriod";
+    String PENALTY_RATE = "penaltyRate";
 
     String NUMBER_OF_REPAYMENTS = "numberOfRepayments";
     String MIN_NUMBER_OF_REPAYMENTS = "minNumberOfRepayments";
