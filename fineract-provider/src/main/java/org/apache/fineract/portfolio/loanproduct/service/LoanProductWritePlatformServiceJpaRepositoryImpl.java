@@ -38,6 +38,7 @@ import org.apache.fineract.infrastructure.core.service.DateUtils;
 import org.apache.fineract.infrastructure.entityaccess.domain.FineractEntityAccessType;
 import org.apache.fineract.infrastructure.entityaccess.service.FineractEntityAccessUtil;
 import org.apache.fineract.infrastructure.event.business.domain.loan.product.LoanProductCreateBusinessEvent;
+import org.apache.fineract.infrastructure.event.business.domain.loan.product.LoanProductPricingParameterChangeBusinessEvent;
 import org.apache.fineract.infrastructure.event.business.service.BusinessEventNotifierService;
 import org.apache.fineract.infrastructure.security.service.PlatformSecurityContext;
 import org.apache.fineract.organisation.monetary.exception.InvalidCurrencyException;
@@ -301,6 +302,12 @@ public class LoanProductWritePlatformServiceJpaRepositoryImpl implements LoanPro
             if (!changes.isEmpty()) {
                 product.validateLoanProductPreSave();
                 this.loanProductRepository.saveAndFlush(product);
+
+                // Check if any pricing parameters have changed and fire event
+                if (hasPricingParameterChanges(changes)) {
+                    businessEventNotifierService
+                            .notifyPostBusinessEvent(new LoanProductPricingParameterChangeBusinessEvent(product, changes));
+                }
             }
 
             return new CommandProcessingResultBuilder() //
@@ -434,5 +441,42 @@ public class LoanProductWritePlatformServiceJpaRepositoryImpl implements LoanPro
 
     private void logAsErrorUnexpectedDataIntegrityException(final Exception dve) {
         log.error("Error occurred.", dve);
+    }
+
+    /**
+     * Checks if any pricing parameters (interest rate, interest calculation method, or penalty rate) have been
+     * modified in the loan product update.
+     *
+     * @param changes
+     *            Map of parameter changes
+     * @return true if any pricing parameter has changed, false otherwise
+     */
+    private boolean hasPricingParameterChanges(Map<String, Object> changes) {
+        // Interest rate changes
+        if (changes.containsKey(LoanProductConstants.INTEREST_RATE_PER_PERIOD)) {
+            return true;
+        }
+
+        // Interest calculation method changes
+        if (changes.containsKey(LoanProductConstants.interestTypeParamName)) {
+            return true;
+        }
+
+        // Interest calculation period method changes
+        if (changes.containsKey(LoanProductConstants.interestCalculationPeriodTypeParamName)) {
+            return true;
+        }
+
+        // Floating rate related changes (also affect interest rate)
+        if (changes.containsKey("isLinkedToFloatingInterestRates")) {
+            return true;
+        }
+
+        // Interest recalculation enabled/disabled affects how interest is calculated
+        if (changes.containsKey(LoanProductConstants.IS_INTEREST_RECALCULATION_ENABLED_PARAMETER_NAME)) {
+            return true;
+        }
+
+        return false;
     }
 }
