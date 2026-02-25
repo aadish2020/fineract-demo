@@ -38,6 +38,7 @@ import org.apache.fineract.infrastructure.core.service.DateUtils;
 import org.apache.fineract.infrastructure.entityaccess.domain.FineractEntityAccessType;
 import org.apache.fineract.infrastructure.entityaccess.service.FineractEntityAccessUtil;
 import org.apache.fineract.infrastructure.event.business.domain.loan.product.LoanProductCreateBusinessEvent;
+import org.apache.fineract.infrastructure.event.business.domain.loan.product.LoanProductPricingChangeBusinessEvent;
 import org.apache.fineract.infrastructure.event.business.service.BusinessEventNotifierService;
 import org.apache.fineract.infrastructure.security.service.PlatformSecurityContext;
 import org.apache.fineract.organisation.monetary.exception.InvalidCurrencyException;
@@ -301,6 +302,15 @@ public class LoanProductWritePlatformServiceJpaRepositoryImpl implements LoanPro
             if (!changes.isEmpty()) {
                 product.validateLoanProductPreSave();
                 this.loanProductRepository.saveAndFlush(product);
+            }
+
+            // Detect changes to pricing fields: interestRatePerPeriod, penaltyRate, interestCalculationPeriodType.
+            // If any pricing field changed, emit an event so downstream logic can update affected loans.
+            boolean pricingChanged = changes.containsKey(LoanProductConstants.INTEREST_RATE_PER_PERIOD)
+                    || changes.containsKey(LoanProductConstants.PENALTY_RATE)
+                    || changes.containsKey("interestCalculationPeriodType");
+            if (pricingChanged) {
+                businessEventNotifierService.notifyPostBusinessEvent(new LoanProductPricingChangeBusinessEvent(product));
             }
 
             return new CommandProcessingResultBuilder() //
