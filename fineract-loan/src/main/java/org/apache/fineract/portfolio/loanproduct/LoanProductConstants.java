@@ -61,6 +61,9 @@ public interface LoanProductConstants {
     String MIN_INTEREST_RATE_PER_PERIOD = "minInterestRatePerPeriod";
     String MAX_INTEREST_RATE_PER_PERIOD = "maxInterestRatePerPeriod";
 
+    /** Penalty rate applied to overdue balances; tracked as a product pricing field for change detection. */
+    String PENALTY_RATE = "penaltyRate";
+
     String NUMBER_OF_REPAYMENTS = "numberOfRepayments";
     String MIN_NUMBER_OF_REPAYMENTS = "minNumberOfRepayments";
     String MAX_NUMBER_OF_REPAYMENTS = "maxNumberOfRepayments";

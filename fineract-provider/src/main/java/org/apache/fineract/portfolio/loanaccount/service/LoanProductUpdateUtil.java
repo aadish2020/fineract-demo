@@ -225,6 +225,15 @@ public class LoanProductUpdateUtil {
             actualChanges.put(accountingTypeParamName, newValue);
             loanProduct.setExternalId(newValue);
         }
+
+        // Detect change to penaltyRate (a product pricing field alongside interestRatePerPeriod)
+        final String penaltyRateParamName = LoanProductConstants.PENALTY_RATE;
+        if (command.isChangeInBigDecimalParameterNamed(penaltyRateParamName, loanProduct.getPenaltyRate())) {
+            final BigDecimal newValue = command.bigDecimalValueOfParameterNamed(penaltyRateParamName);
+            actualChanges.put(penaltyRateParamName, newValue);
+            actualChanges.put("locale", localeAsInput);
+            loanProduct.setPenaltyRate(newValue);
+        }
         trancheDetailsUpdateUtil.update(loanProduct.getLoanProductTrancheDetails(), command, actualChanges);
 
         if (command.isChangeInIntegerParameterNamed(LoanProductConstants.OVERDUE_DAYS_FOR_NPA_PARAMETER_NAME,

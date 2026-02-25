@@ -231,6 +231,12 @@ public class LoanProduct extends AbstractPersistableCustom<Long> {
     @Column(name = "repayment_start_date_type_enum", nullable = false)
     private RepaymentStartDateType repaymentStartDateType;
 
+    /**
+     * Penalty rate applied to overdue balances (percentage). Used for change detection of product pricing fields.
+     */
+    @Column(name = "penalty_rate", scale = 6, precision = 19)
+    private BigDecimal penaltyRate;
+
     public void updateLoanProductInRelatedClasses() {
         if (this.isInterestRecalculationEnabled()) {
             this.productInterestRecalculationDetails.updateProduct(this);
