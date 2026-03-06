@@ -74,6 +74,10 @@ public interface LoanRepository extends JpaRepository<Loan, Long>, JpaSpecificat
 
     String DOES_PRODUCT_HAVE_LOANS_WITH_STATUSES = "select case when (count (loan) > 0) then 'true' else 'false' end from Loan loan where loan.loanProduct.id = :productId and loan.loanStatus in :loanStatuses";
 
+    // Included statuses: APPROVED, ACTIVE, OVERPAID, TRANSFER_IN_PROGRESS, TRANSFER_ON_HOLD, SUBMITTED_AND_PENDING_APPROVAL
+    // Excluded statuses: CLOSED_OBLIGATIONS_MET, CLOSED_WRITTEN_OFF, CLOSED_RESCHEDULE_OUTSTANDING_AMOUNT, WITHDRAWN_BY_CLIENT, REJECTED, INVALID
+    String FIND_ACTIVE_LOANS_BY_PRODUCT = "select loan from Loan loan where loan.loanProduct.id = :productId and loan.loanStatus in :loanStatuses";
+
     String FIND_LOANS_BY_ACCOUNT_NUMBER_AND_STATUSES = "select loan from Loan loan where loan.accountNumber = :accountNumber and loan.loanStatus in :loanStatuses";
 
     String FIND_ALL_BY_STATUSES = "select loan.id from Loan loan where loan.loanStatus in :loanStatuses";
@@ -199,6 +203,10 @@ public interface LoanRepository extends JpaRepository<Loan, Long>, JpaSpecificat
 
     @Query(DOES_PRODUCT_HAVE_LOANS_WITH_STATUSES)
     boolean doLoanAccountsWithLoansInStatusesExistForProduct(@Param("productId") Long productId,
+            @Param("loanStatuses") Collection<LoanStatus> loanStatuses);
+
+    @Query(FIND_ACTIVE_LOANS_BY_PRODUCT)
+    List<Loan> findByLoanProductAndStatusIn(@Param("productId") Long productId,
             @Param("loanStatuses") Collection<LoanStatus> loanStatuses);
 
     @Query(FIND_LOANS_BY_ACCOUNT_NUMBER_AND_STATUSES)
