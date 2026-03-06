@@ -260,6 +260,19 @@ public class LoanRepositoryWrapper {
         return this.repository.doLoanAccountsWithLoansInStatusesExistForProduct(productId, NON_CLOSED_AND_OVERPAID_LOAN_STATUSES);
     }
 
+    /**
+     * Returns all loans referencing a specific loan product that are in eligible active statuses
+     * (SUBMITTED_AND_PENDING_APPROVAL, APPROVED, ACTIVE, TRANSFER_IN_PROGRESS, TRANSFER_ON_HOLD, OVERPAID).
+     * Closed and written-off loans are excluded.
+     *
+     * @param productId the ID of the loan product
+     * @return list of eligible active loans for the given product
+     */
+    @Transactional(readOnly = true)
+    public List<Loan> findActiveLoansByProductId(Long productId) {
+        return this.repository.findByLoanProductAndStatusIn(productId, NON_CLOSED_AND_OVERPAID_LOAN_STATUSES);
+    }
+
     public Loan findNonClosedLoanByAccountNumber(@Param("accountNumber") String accountNumber) {
         return this.repository.findLoanByAccountNumberAndStatuses(accountNumber, NON_CLOSED_LOAN_STATUSES);
     }
